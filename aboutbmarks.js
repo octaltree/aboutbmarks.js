@@ -11,33 +11,33 @@ var INFO = xml`
 `;
 // }}}
 (function(){
+  const bkms = Cc["@mozilla.org/browser/nav-bookmarks-service;1"]
+    .getService(Ci.nsINavBookmarksService);
+  const hs = Components.classes["@mozilla.org/browser/nav-history-service;1"]
+    .getService(Components.interfaces.nsINavHistoryService);
+
   function main(){
     clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
     logger.init();
-    const bkmservice = Cc["@mozilla.org/browser/nav-bookmarks-service;1"]
-      .getService(Ci.nsINavBookmarksService);
-    //getBookmarks(bkmservice.placesRoot);
-    getBookmarks(bkmservice.unfiledBookmarksFolder);
-    logger.dump(bkmservice);
+    const allfolders = recFolders(bkms.placesRoot);
+    logger.dump(allfolders);
   }
-  commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
 
-  function getBookmarks(folder){
-    const hs = Components.classes["@mozilla.org/browser/nav-history-service;1"]
-      .getService(Components.interfaces.nsINavHistoryService);
+  function recFolders(folder){ // {{{
     const query = folder => {
       var tmp = hs.getNewQuery();
       tmp.setFolders([folder], 1);
       return tmp;
     };
-    var result = hs.executeQuery(query(folder), hs.getNewQueryOptions());
-    result.root.containerOpen = true;
+    var r = hs.executeQuery(query(folder), hs.getNewQueryOptions()).root;
+    r.containerOpen = true;
     const range = n => Array.from({length: n}, (v, k) => k);
-    const children = range(result.root.childCount)
-      .map(x => result.root.getChild(x));
-    // TODO 再帰
-    result.root.containerOpen = false;
-  }
+    const children = range(r.childCount).map(x => r.getChild(x));
+    const childfolders = children.filter(c => c.type == c.RESULT_TYPE_FOLDER);
+    const deep = childfolders.map(c => recFolders(c.itemId));
+    r.containerOpen = false;
+    return {id: r.itemId, children: deep};
+  } // }}}
   function clearPage(){ // {{{
     const d = content.document;
     const p = d.documentElement.parentNode;
@@ -67,5 +67,6 @@ var INFO = xml`
         return value;
       }, 2) + '\n';
     }}; // }}}
+  commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
 }());
 // vim: sw=2 ts=2 et si fdm=marker:
