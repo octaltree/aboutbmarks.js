@@ -19,8 +19,11 @@ var INFO = xml`
   function main(){
     clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
     logger.init();
-    logger.dump(bookmark.bkm);
-    logger.dump(bookmark.allFolders(bookmark.bkm.placesRoot));
+    const paths = flatTree(bookmark.allFolders(bookmark.bkm.placesRoot));
+  }
+
+  function flatTree(tree){ // {id:id, children:children}から[[]] pathの配列
+    return [];
   }
 
   var bookmark = { // {{{
@@ -45,9 +48,6 @@ var INFO = xml`
       r.containerOpen = false;
       return res;
     },
-    //allFolders: folder => {
-
-    //}
     allFolders: folder => bookmark.processContents(folder, bs => {
       const fs = bs.filter(x => x.type == x.RESULT_TYPE_FOLDER);
       const childfolders = fs.filter(c => c.type == c.RESULT_TYPE_FOLDER);
