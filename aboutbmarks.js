@@ -15,6 +15,14 @@ var INFO = xml`
     .getService(Ci.nsINavBookmarksService);
   const hs = Components.classes["@mozilla.org/browser/nav-history-service;1"]
     .getService(Components.interfaces.nsINavHistoryService);
+
+  function main(){
+    clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
+    logger.init();
+    logger.dump(bookmark.bkm);
+    logger.dump(bookmark.allFolders(bookmark.bkm.placesRoot));
+  }
+
   var bookmark = { // {{{
     bkm:
       Cc["@mozilla.org/browser/nav-bookmarks-service;1"]
@@ -46,14 +54,6 @@ var INFO = xml`
       const deep = childfolders.map(c => bookmark.allFolders(c.itemId));
       return {id: folder, children: deep};
     })}; // }}}
-
-  function main(){
-    clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
-    logger.init();
-    logger.dump(bookmark.bkm);
-    logger.dump(bookmark.allFolders(bookmark.bkm.placesRoot));
-  }
-
   function clearPage(){ // {{{
     const d = content.document;
     const p = d.documentElement.parentNode;
