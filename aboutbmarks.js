@@ -20,31 +20,51 @@ var INFO = xml`
   function main(){
     clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
     const paths = flatTree(bookmark.allFolders(bookmark.bkm.placesRoot));
+    showBookmarks(paths);
     addScripts(
         ['https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/freewall/1.0.5/freewall.min.js'],
-        () => { cui.log(window); cui.log(content.window); });
+        useFreewall);
+  }
+  function showBookmarks(paths){
+    const d = content.document;
+    d.body.innerHTML += '<div id="freewall"></div>';
+  }
+  function useFreewall(){
+    const d = content.document;
+    const w = content.window;
+    const rawjs =
+      'var wall = new Freewall("#freewall");'+
+      'wall.reset({'+
+        'selector: ".brick",'+
+        'animate: false,'+
+        'cellW: 150, cellH: "auto",'+
+        'onResize: ()=>wall.fitWidth()});'+
+      'wall.container.find(".brick").each(() => wall.fitWidth());';
+    addSnippet(rawjs);
   }
 
   function flatTree(tree){ // {id:id, children:children}から[[]] pathの配列
     return [];
+  }
+  function addSnippet(str){ // {{{
+    const d = content.document;
+    var s = d.createElement('script');
+    s.innerHTML += str;
+    d.body.appendChild(s);
   }
   function addScripts(uris, onload){
     const reqs = uris.map(uri => f => () => {
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = () => {
         if( xhr.readyState != 4 || xhr.status != 200 ) return;
-        const d = content.document;
-        var s = d.createElement('script');
-        s.innerHTML = 'console.log("add ' + uri + '");' + xhr.responseText;
-        //'(function(){' + xhr.responseText + '}());';
-        d.body.appendChild(s);
+        addSnippet('console.log("add ' + uri + '");' + xhr.responseText);
         f(xhr);
       };
       xhr.open('GET', uri, true); xhr.send(null);
     });
     reqs.reduceRight((f, x) => x(f), onload)();
-  }
+  } // }}}
 
   var bookmark = { // {{{
     bkm:
