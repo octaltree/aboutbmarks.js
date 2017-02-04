@@ -19,7 +19,8 @@ var INFO = xml`
 
   function main(){
     clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
-    const paths = flatTree(bookmark.allFolders(bookmark.bkm.placesRoot));
+    const foldertree = bookmark.allFolders(bookmark.bkm.placesRoot);
+    const paths = flatTree(foldertree);
     showBookmarks(paths);
     addScripts(
         ['https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
@@ -44,9 +45,19 @@ var INFO = xml`
     addSnippet(rawjs);
   }
 
-  function flatTree(tree){ // {id:id, children:children}から[[]] pathの配列
-    return [];
+  //{id:7, children:[[{id:1, children:[2,3,4]}, {id:5, chidren: [6]]]}
+  //  [[1], [1,2], [1,3], [1,4], [5], [5,6]]
+  function flatTree(tree, depth){
   }
+  function flatTree(tree){ // {{{
+    function rec(x, depth){
+      const newdepth = depth.concat(x.id);
+      return x.children.map(y => rec(y, newdepth)).reduce(
+          (base, y) => base.concat(y), [newdepth]);
+    }
+    return rec(tree, []);
+  } // }}}
+
   function addSnippet(str){ // {{{
     const d = content.document;
     var s = d.createElement('script');
