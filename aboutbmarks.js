@@ -17,24 +17,24 @@ var INFO = xml`
     clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
     const foldertree = bookmark.allFolders(bookmark.bkm.placesRoot);
     const paths = flatTree(foldertree);
+    addStyle();
+    showBookmarks(paths);
     const d = content.document;
     const css = uri => '<link rel="stylesheet" rel="uri">'.replace('uri', uri);
     d.body.innerHTML +=
       css('https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/css/main.min.css');
-    showBookmarks(paths);
     addScripts([
         'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/wookmark.min.js'],
         () => {
-          addSnippet("jQuery(() => {" +
+          addSnippet("jQuery('body').ready(() => {" + // DOM構築待つ
               "console.log('hoge');" +
-              "$('.brick').wookmark({" +
+              "$('#folders').wookmark({" +
               "autoResize: false," +
-              "container: $('#freewall')," +
+              "container: $('body')," +
               "offset: 15," +
               "}); });");
         });
-    //addStyle();
     //addScripts(
     //    ['https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
     //    'https://cdnjs.cloudflare.com/ajax/libs/freewall/1.0.5/freewall.min.js'],
@@ -53,8 +53,10 @@ var INFO = xml`
     const d = content.document;
     const name = id => bookmark.bkm.getItemTitle(id);
     const freewall = d.createElement('div');
-    freewall.id = 'freewall';
-    freewall.innerHTML += paths.map(p => {
+    freewall.id = 'wrap';
+    const ul = d.createElement('ul');
+    ul.id = 'folders';
+    ul.innerHTML += paths.map(p => {
       if( p.length < 1 || p.length == 1 && p[0] == 1 ) return '';
       const path = p.slice(1);
       const target = p[p.length-1];
@@ -67,9 +69,10 @@ var INFO = xml`
             .map(b => { return {title: b.title, uri: b.uri} }))
         .map(b => '<li><a href="' + b.uri + '">' + b.title + '</a></li>')
         .join('\n') + '</ul>';
-      const brick = '<div class="brick">' + title + bkmlist + '</div>';
+      const brick = '<li class="brick"><div>' + title + bkmlist + '</div></li>';
       return brick;
     }).join('\n');
+    freewall.appendChild(ul);
     d.body.appendChild(freewall);
   }
   //function useFreewall(){ // {{{
@@ -104,12 +107,15 @@ var INFO = xml`
     s.innerHTML += str;
     d.body.appendChild(s);
   }
-  //function addStyle(){ // {{{
-  //  const d = content.document;
-  //  var s = d.createElement('style');
-  //  s.innerHTML += 'ul { list-style-type: none; } li { width: 150px; overflow: clip}';
-  //  d.head.appendChild(s);
-  //}
+  function addStyle(){ // {{{
+    const d = content.document;
+    var s = d.createElement('style');
+    s.innerHTML += 'ul { list-style-type: none; }' +
+      'li ul div body html { margin: 0; padding: 0 }' +
+      '.brick { width: 300px; }' +
+      'div#wrap { width: 100%; }';
+    d.head.appendChild(s);
+  }
   function addScripts(uris, onload){
     const reqs = uris.map(uri => f => () => {
       var xhr = new XMLHttpRequest();
