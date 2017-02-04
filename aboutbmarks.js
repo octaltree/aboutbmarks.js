@@ -10,6 +10,15 @@ http://opensource.org/licenses/mit-license.php
 var INFO = xml`
 `;
 // }}}
+!function(){
+const win = content.window;
+const doc = content.document;
+//https://cdnjs.cloudflare.com/ajax/libs/riot/3.1.0/riot+compiler.min.js
+commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
+function main(){
+}
+win.console.log('aboutbmarks.js loaded');
+}();
 (function(){
   const cui = content.window.console;
 
