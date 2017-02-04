@@ -17,12 +17,37 @@ var INFO = xml`
     clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
     const foldertree = bookmark.allFolders(bookmark.bkm.placesRoot);
     const paths = flatTree(foldertree);
-    addStyle();
+    const d = content.document;
+    const css = uri => '<link rel="stylesheet" rel="uri">'.replace('uri', uri);
+    d.body.innerHTML +=
+      css('https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/css/main.min.css');
     showBookmarks(paths);
-    addScripts(
-        ['https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/freewall/1.0.5/freewall.min.js'],
-        useFreewall);
+    addScripts([
+        'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/wookmark.min.js'],
+        () => {
+          addSnippet("jQuery(() => {" +
+              "console.log('hoge');" +
+              "$('.brick').wookmark({" +
+              "autoResize: false," +
+              "container: $('#freewall')," +
+              "offset: 15," +
+              "}); });");
+        });
+    //addStyle();
+    //addScripts(
+    //    ['https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
+    //    'https://cdnjs.cloudflare.com/ajax/libs/freewall/1.0.5/freewall.min.js'],
+    //    useFreewall);
+  }
+  function useTiler(){
+  }
+  function loadLib(){
+    const d = content.document;
+    const js = uri => '<script src="uri"></script>'.replace('uri', uri);
+    const css = uri => '<link rel="stylesheet" rel="uri">'.replace('uri', uri);
+    d.body.innerHTML +=
+      css('https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/css/main.min.css');
   }
   function showBookmarks(paths){
     const d = content.document;
@@ -47,22 +72,22 @@ var INFO = xml`
     }).join('\n');
     d.body.appendChild(freewall);
   }
-  function useFreewall(){ // {{{
-    const d = content.document;
-    const w = content.window;
-    const rawjs =
-      'var wall = new Freewall("#freewall");'+
-      'wall.reset({'+
-        'selector: ".brick",'+
-        'block: {flex: 1},'+
-        'fillGap: true,'+
-        'animate: false,'+
-        'cellW: 150, cellH: "auto",'+
-        'onResize: ()=>wall.fitWidth()});'+
-      //'wall.container.find(".brick").each(() => wall.fitWidth());'+
-      'wall.fitWidth();';
-    addSnippet(rawjs);
-  } // }}}
+  //function useFreewall(){ // {{{
+  //  const d = content.document;
+  //  const w = content.window;
+  //  const rawjs =
+  //    'var wall = new Freewall("#freewall");'+
+  //    'wall.reset({'+
+  //      'selector: ".brick",'+
+  //      'block: {flex: 1},'+
+  //      'fillGap: true,'+
+  //      'animate: false,'+
+  //      'cellW: 150, cellH: "auto",'+
+  //      'onResize: ()=>wall.fitWidth()});'+
+  //    //'wall.container.find(".brick").each(() => wall.fitWidth());'+
+  //    'wall.fitWidth();';
+  //  addSnippet(rawjs);
+  //} // }}}
 
   function flatTree(tree){ // {{{
     function rec(x, depth){
@@ -73,20 +98,19 @@ var INFO = xml`
     return rec(tree, []);
   } // }}}
 
-  function addStyle(){ // {{{
-    const d = content.document;
-    var s = d.createElement('style');
-    s.innerHTML += 'ul { list-style-type: none; } li { width: 150px; overflow: clip}';
-    d.head.appendChild(s);
-  }
   function addSnippet(str){
     const d = content.document;
     var s = d.createElement('script');
     s.innerHTML += str;
     d.body.appendChild(s);
   }
+  //function addStyle(){ // {{{
+  //  const d = content.document;
+  //  var s = d.createElement('style');
+  //  s.innerHTML += 'ul { list-style-type: none; } li { width: 150px; overflow: clip}';
+  //  d.head.appendChild(s);
+  //}
   function addScripts(uris, onload){
-    // TODO scriptタグ足すだけでいい
     const reqs = uris.map(uri => f => () => {
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = () => {
