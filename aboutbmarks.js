@@ -15,15 +15,35 @@ var INFO = xml`
     .getService(Ci.nsINavBookmarksService);
   const hs = Components.classes["@mozilla.org/browser/nav-history-service;1"]
     .getService(Components.interfaces.nsINavHistoryService);
+  const cui = content.window.console;
 
   function main(){
     clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
-    logger.init();
     const paths = flatTree(bookmark.allFolders(bookmark.bkm.placesRoot));
+    addScripts(
+        ['https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/freewall/1.0.5/freewall.min.js'],
+        () => { cui.log(window); cui.log(content.window); });
   }
 
   function flatTree(tree){ // {id:id, children:children}から[[]] pathの配列
     return [];
+  }
+  function addScripts(uris, onload){
+    const reqs = uris.map(uri => f => () => {
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = () => {
+        if( xhr.readyState != 4 || xhr.status != 200 ) return;
+        const d = content.document;
+        var s = d.createElement('script');
+        s.innerHTML = 'console.log("add ' + uri + '");' + xhr.responseText;
+        //'(function(){' + xhr.responseText + '}());';
+        d.body.appendChild(s);
+        f(xhr);
+      };
+      xhr.open('GET', uri, true); xhr.send(null);
+    });
+    reqs.reduceRight((f, x) => x(f), onload)();
   }
 
   var bookmark = { // {{{
@@ -63,26 +83,6 @@ var INFO = xml`
     p.appendChild(d.createElement('html'));
     push('head'); push('body');
   } // }}}
-  var logger = { // {{{
-    space: undefined,
-    init: function(){
-      const d = content.document;
-      this.space = d.createElement('pre');
-      d.body.appendChild(this.space);
-    },
-    msg: function(msg){
-      this.space.innerText += msg;
-    },
-    dump: function(obj){
-      var cache = [];
-      this.space.innerText += JSON.stringify(obj, (key, value) => {
-        if( typeof value === 'object' && value !== null ){
-          if( cache.indexOf(value) !== -1 ) return;
-          cache.push(value);
-        }
-        return value;
-      }, 2) + '\n';
-    }}; // }}}
   commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
 }());
 // vim: sw=2 ts=2 et si fdm=marker:
