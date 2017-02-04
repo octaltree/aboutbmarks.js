@@ -11,10 +11,6 @@ var INFO = xml`
 `;
 // }}}
 (function(){
-  const bkms = Cc["@mozilla.org/browser/nav-bookmarks-service;1"]
-    .getService(Ci.nsINavBookmarksService);
-  const hs = Components.classes["@mozilla.org/browser/nav-history-service;1"]
-    .getService(Components.interfaces.nsINavHistoryService);
   const cui = content.window.console;
 
   function main(){
@@ -29,7 +25,27 @@ var INFO = xml`
   }
   function showBookmarks(paths){
     const d = content.document;
-    d.body.innerHTML += '<div id="freewall"></div>';
+    const name = id => bookmark.bkm.getItemTitle(id);
+    d.body.innerHTML += '<div id="freewall">' +
+      paths.map(p => {
+        if( p.length < 1 || p.length == 1 && p[0] == 1 ) return '';
+        const path = p.slice(1);
+        const target = p[p.length-1];
+        const names = path.map(name);
+        // TODO フォルダに適切なリンクを貼る
+        const title = '<div class="title">' + names.join() + '</div>';
+        const bkmlist = '<ul>' +
+          bookmark.processContents(target, bs => bs
+              .filter(b => b.type == b.RESULT_TYPE_URI)
+              .map(b => { return {title: b.title, uri: b.uri} }))
+          .map(b => '<li><a href="' + b.uri + '">' + b.title + '</a></li>')
+          .join('\n') + '</ul>';
+        cui.log('');
+        cui.log(title + bkmlist);
+        cui.log('');
+        const brick = '<div class="brick">' + title + '</div>';
+        return brick;
+      }).reduce((a, b) => a+b, '') + '</div>';
   }
   function useFreewall(){
     const d = content.document;
@@ -91,7 +107,7 @@ var INFO = xml`
         return tmp;
       };
       var r = bookmark.hst
-        .executeQuery(query(folder), hs.getNewQueryOptions()).root;
+        .executeQuery(query(folder), bookmark.hst.getNewQueryOptions()).root;
       r.containerOpen = true;
       const range = n => Array.from({length: n}, (v, k) => k);
       const children = range(r.childCount).map(x => r.getChild(x));
