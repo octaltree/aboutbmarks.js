@@ -27,8 +27,9 @@ var INFO = xml`
   function showBookmarks(paths){
     const d = content.document;
     const name = id => bookmark.bkm.getItemTitle(id);
-    d.body.innerHTML += '<div id="freewall">';
-    paths.forEach(p => {
+    const freewall = d.createElement('div');
+    freewall.id = 'freewall';
+    freewall.innerHTML += paths.map(p => {
       if( p.length < 1 || p.length == 1 && p[0] == 1 ) return '';
       const path = p.slice(1);
       const target = p[p.length-1];
@@ -42,9 +43,9 @@ var INFO = xml`
         .map(b => '<li><a href="' + b.uri + '">' + b.title + '</a></li>')
         .join('\n') + '</ul>';
       const brick = '<div class="brick">' + title + bkmlist + '</div>';
-      d.body.innerHTML += brick;
-    });
-    d.body.innerHTML += '</div>';
+      return brick;
+    }).join('\n');
+    d.body.appendChild(freewall);
   }
   function useFreewall(){ // {{{
     const d = content.document;
@@ -58,7 +59,7 @@ var INFO = xml`
         'animate: false,'+
         'cellW: 150, cellH: "auto",'+
         'onResize: ()=>wall.fitWidth()});'+
-      'wall.container.find(".brick").each(() => wall.fitWidth());'+
+      //'wall.container.find(".brick").each(() => wall.fitWidth());'+
       'wall.fitWidth();';
     addSnippet(rawjs);
   } // }}}
@@ -75,7 +76,7 @@ var INFO = xml`
   function addStyle(){ // {{{
     const d = content.document;
     var s = d.createElement('style');
-    s.innerHTML += 'ul { list-style-type: none; }';
+    s.innerHTML += 'ul { list-style-type: none; } li { width: 150px; overflow: clip}';
     d.head.appendChild(s);
   }
   function addSnippet(str){
@@ -85,6 +86,7 @@ var INFO = xml`
     d.body.appendChild(s);
   }
   function addScripts(uris, onload){
+    // TODO scriptタグ足すだけでいい
     const reqs = uris.map(uri => f => () => {
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = () => {
