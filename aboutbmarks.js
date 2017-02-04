@@ -27,20 +27,13 @@ var INFO = xml`
         'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/wookmark.min.js'],
         () => {
-          addSnippet("jQuery('body').ready(() => {" + // DOM構築待つ
-              "console.log('hoge');" +
+          addSnippet("jQuery('body').ready(() => {" +
               "$('#folders').wookmark({" +
               "autoResize: true," +
               "container: $('#wrap')," +
               "offset: 0," +
               "}); });");
         });
-    //addScripts(
-    //    ['https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
-    //    'https://cdnjs.cloudflare.com/ajax/libs/freewall/1.0.5/freewall.min.js'],
-    //    useFreewall);
-  }
-  function useTiler(){
   }
   function loadLib(){
     const d = content.document;
