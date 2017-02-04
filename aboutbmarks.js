@@ -30,9 +30,9 @@ var INFO = xml`
           addSnippet("jQuery('body').ready(() => {" + // DOM構築待つ
               "console.log('hoge');" +
               "$('#folders').wookmark({" +
-              "autoResize: false," +
-              "container: $('body')," +
-              "offset: 15," +
+              "autoResize: true," +
+              "container: $('#wrap')," +
+              "offset: 0," +
               "}); });");
         });
     //addScripts(
@@ -75,22 +75,6 @@ var INFO = xml`
     freewall.appendChild(ul);
     d.body.appendChild(freewall);
   }
-  //function useFreewall(){ // {{{
-  //  const d = content.document;
-  //  const w = content.window;
-  //  const rawjs =
-  //    'var wall = new Freewall("#freewall");'+
-  //    'wall.reset({'+
-  //      'selector: ".brick",'+
-  //      'block: {flex: 1},'+
-  //      'fillGap: true,'+
-  //      'animate: false,'+
-  //      'cellW: 150, cellH: "auto",'+
-  //      'onResize: ()=>wall.fitWidth()});'+
-  //    //'wall.container.find(".brick").each(() => wall.fitWidth());'+
-  //    'wall.fitWidth();';
-  //  addSnippet(rawjs);
-  //} // }}}
 
   function flatTree(tree){ // {{{
     function rec(x, depth){
@@ -110,10 +94,13 @@ var INFO = xml`
   function addStyle(){ // {{{
     const d = content.document;
     var s = d.createElement('style');
-    s.innerHTML += 'ul { list-style-type: none; }' +
-      'li ul div body html { margin: 0; padding: 0 }' +
-      '.brick { width: 300px; }' +
-      'div#wrap { width: 100%; }';
+    s.innerHTML += 'ul { list-style-type: none; }\n' +
+      'body { margin: 0; padding: 0 }\n' +
+      'ul#folders { margin: 0; padding: 0 }\n' +
+      'div#wrap { margin: 0; padding: 0 }\n' +
+      '.brick ul { margin: 0; padding: 0 }\n' +
+      '.brick { width: 300px; }\n' +
+      'div#wrap { width: 100%; }\n';
     d.head.appendChild(s);
   }
   function addScripts(uris, onload){
