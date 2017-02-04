@@ -17,6 +17,7 @@ var INFO = xml`
     clearPage(); // TODO 専用ページをつくりopen, tabopenできるようにしたい
     const foldertree = bookmark.allFolders(bookmark.bkm.placesRoot);
     const paths = flatTree(foldertree);
+    addStyle();
     showBookmarks(paths);
     addScripts(
         ['https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js',
@@ -26,45 +27,42 @@ var INFO = xml`
   function showBookmarks(paths){
     const d = content.document;
     const name = id => bookmark.bkm.getItemTitle(id);
-    d.body.innerHTML += '<div id="freewall">' +
-      paths.map(p => {
-        if( p.length < 1 || p.length == 1 && p[0] == 1 ) return '';
-        const path = p.slice(1);
-        const target = p[p.length-1];
-        const names = path.map(name);
-        // TODO フォルダに適切なリンクを貼る
-        const title = '<div class="title">' + names.join() + '</div>';
-        const bkmlist = '<ul>' +
-          bookmark.processContents(target, bs => bs
-              .filter(b => b.type == b.RESULT_TYPE_URI)
-              .map(b => { return {title: b.title, uri: b.uri} }))
-          .map(b => '<li><a href="' + b.uri + '">' + b.title + '</a></li>')
-          .join('\n') + '</ul>';
-        cui.log('');
-        cui.log(title + bkmlist);
-        cui.log('');
-        const brick = '<div class="brick">' + title + '</div>';
-        return brick;
-      }).reduce((a, b) => a+b, '') + '</div>';
+    d.body.innerHTML += '<div id="freewall">';
+    paths.forEach(p => {
+      if( p.length < 1 || p.length == 1 && p[0] == 1 ) return '';
+      const path = p.slice(1);
+      const target = p[p.length-1];
+      const names = path.map(name);
+      // TODO フォルダに適切なリンクを貼る
+      const title = '<div class="title">' + names.join() + '</div>';
+      const bkmlist = '<ul>' +
+        bookmark.processContents(target, bs => bs
+            .filter(b => b.type == b.RESULT_TYPE_URI)
+            .map(b => { return {title: b.title, uri: b.uri} }))
+        .map(b => '<li><a href="' + b.uri + '">' + b.title + '</a></li>')
+        .join('\n') + '</ul>';
+      const brick = '<div class="brick">' + title + bkmlist + '</div>';
+      d.body.innerHTML += brick;
+    });
+    d.body.innerHTML += '</div>';
   }
-  function useFreewall(){
+  function useFreewall(){ // {{{
     const d = content.document;
     const w = content.window;
     const rawjs =
       'var wall = new Freewall("#freewall");'+
       'wall.reset({'+
         'selector: ".brick",'+
+        'block: {flex: 1},'+
+        'fillGap: true,'+
         'animate: false,'+
         'cellW: 150, cellH: "auto",'+
         'onResize: ()=>wall.fitWidth()});'+
-      'wall.container.find(".brick").each(() => wall.fitWidth());';
+      'wall.container.find(".brick").each(() => wall.fitWidth());'+
+      'wall.fitWidth();';
     addSnippet(rawjs);
-  }
+  } // }}}
 
-  //{id:7, children:[[{id:1, children:[2,3,4]}, {id:5, chidren: [6]]]}
-  //  [[1], [1,2], [1,3], [1,4], [5], [5,6]]
-  function flatTree(tree, depth){
-  }
   function flatTree(tree){ // {{{
     function rec(x, depth){
       const newdepth = depth.concat(x.id);
@@ -74,7 +72,13 @@ var INFO = xml`
     return rec(tree, []);
   } // }}}
 
-  function addSnippet(str){ // {{{
+  function addStyle(){ // {{{
+    const d = content.document;
+    var s = d.createElement('style');
+    s.innerHTML += 'ul { list-style-type: none; }';
+    d.head.appendChild(s);
+  }
+  function addSnippet(str){
     const d = content.document;
     var s = d.createElement('script');
     s.innerHTML += str;
