@@ -14,6 +14,19 @@ var INFO = xml`
 commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
 function main(){
   page.init();
+  const fs = bookmark.allFolderPaths(bookmark.bookmarksservice.placesRoot)
+    .filter(x => x.length > 1)
+    .map(x => x.slice(1)) // ルートフォルダを除く
+    .map(x => {
+      const fid = x[x.length-1];
+      return {
+        id: fid,
+        depth: x.slice(0, x.length-1),
+        uris: bookmark.expand(fid, xs => xs
+            .filter(x => x.type == x.RESULT_TYPE_URI)
+            .map(x => { return {id: x.itemId, title: x.title}; }))};
+    });
+  page.showFolder(fs);
 }
 const page = { // {{{
   win: undefined,
@@ -80,8 +93,10 @@ ${liberator.globalVariables.aboutbmarks_css}
     s.innerHTML += str;
     this.doc.body.appendChild(s);
   },
-  showFolder: function(fs, bs){
-    // {id: int, title: str}
+  showFolder: function(fs){
+    // [{id: int, depth: [{id: int, title: str}], uris: [{title: str, uri: str}]}] ->
+    const bookmark = b => `<li class="uri"><a href="${b.uri}">${b.title}</a></li>`;
+    this.log(fs);
     const tmp = `
       <li>
         <div class="folder">
