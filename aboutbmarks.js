@@ -77,10 +77,27 @@ html, body, .folders.wrap, ul.folders {
     this.doc.documentElement.innerHTML = this.inhtml;
     this.addSnippet(this.inscript);
   },
-  addSnippet(str){
+  addSnippet: function(str){
     const s = this.doc.createElement('script');
     s.innerHTML += str;
     this.doc.body.appendChild(s);
+  },
+  showFolder: function(fs, bs){
+    // {id: int, title: str}
+    const tmp = `
+      <li>
+        <div class="folder">
+          <div class="title">
+            <a></a>
+            <span></span>
+          </div>
+          <div class="uris">
+            <ul>
+              <li><a href="">name</a></li>
+            </ul>
+          </div>
+        </div>
+      </li>`;
   }}; // }}}
 const bookmark = { // {{{
   bookmarksservice:
