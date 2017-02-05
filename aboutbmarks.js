@@ -14,8 +14,6 @@ var INFO = xml`
 commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
 function main(){
   page.init();
-  page.log(bookmark.allFolders(1));
-  page.log(bookmark.allFolderPaths(1));
 }
 const page = { // {{{
   win: undefined,
@@ -58,7 +56,6 @@ html, body, .folders.wrap, ul.folders {
       adds.reduceRight((iter, x) => x(iter), f)();
     }};
   const main = () => {
-    console.log('script sourced');
     $(function(){
       $('ul.folders').wookmark({
         container: $('.folders.wrap'),
