@@ -61,11 +61,13 @@ html, body, .folders.wrap, ul.folders {
       });
     }};
   initializer.addScripts(function(){
-    console.log('script sourced');
-    $('ul.folders').wookmark({
-      container: $('.folders.wrap'),
-      autoResize: true,
-      offset: 0});
+    $(function(){
+      console.log('script sourced');
+      $('ul.folders').wookmark({
+        container: $('.folders.wrap'),
+        autoResize: true,
+        offset: 0});
+    });
   });
 }();
 `,
