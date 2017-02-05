@@ -11,13 +11,14 @@ var INFO = xml`
 `;
 // }}}
 !function(){
-const win = content.window;
-const doc = content.document;
 commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
 function main(){
-  win.console.log('init page'); page.init();
+  page.init();
 }
 const page = { // {{{
+  win: undefined,
+  doc: undefined,
+  log: function(x){ this.win.console.log(x); return x; },
   inhtml: `
 <head>
 <title>aboutbmarks</title>
@@ -32,21 +33,25 @@ const page = { // {{{
     "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/wookmark.min.js"],
   inscript: `
-console.log('asdf');
+!function(){
+  console.log('script sourced');
+}();
 `,
   init: function(){
-    doc.documentElement.innerHTML = this.inhtml;
+    this.win = content.window;
+    this.doc = content.document;
+    this.doc.documentElement.innerHTML = this.inhtml;
     this.scripts.forEach(uri => {
-      const s = doc.createElement('script');
+      const s = this.doc.createElement('script');
       s.src = uri;
-      doc.body.appendChild(s);
+      this.doc.body.appendChild(s);
     });
     this.addSnippet(this.inscript);
   },
   addSnippet(str){
-    const s = doc.createElement('script');
+    const s = this.doc.createElement('script');
     s.innerHTML += str;
-    doc.body.appendChild(s);
+    this.doc.body.appendChild(s);
   }}; // }}}
 class Bookmark {
 }
