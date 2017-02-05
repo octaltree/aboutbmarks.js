@@ -21,7 +21,12 @@ function main(){
       const fid = x[x.length-1];
       return {
         id: fid,
-        depth: x.slice(0, x.length-1),
+        title: bookmark.bookmarksservice.getItemTitle(fid),
+        depth: x
+          .slice(0, x.length-1)
+          .map(i => {
+            return {id: i, title: bookmark.bookmarksservice.getItemTitle(i)};
+          }),
         uris: bookmark.expand(fid, xs => xs
             .filter(x => x.type == x.RESULT_TYPE_URI)
             .map(x => { return {id: x.itemId, title: x.title}; }))};
@@ -93,7 +98,8 @@ ${liberator.globalVariables.aboutbmarks_css}
     this.doc.body.appendChild(s);
   },
   showFolder: function(fs){
-    // [{id: int, depth: [{id: int, title: str}], uris: [{title: str, uri: str}]}] ->
+    // [{id: int, title: str, depth: [{id: int, title: str}], uris: [{title: str, uri: str}]}] ->
+    this.log(fs);
     const rowb = b => `<li class="uri"><a href="${b.uri}">${b.title}</a></li>`;
     const rowf = f => {
       const tmp = `
