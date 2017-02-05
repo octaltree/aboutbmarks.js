@@ -28,13 +28,14 @@ const page = { // {{{
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/css/main.min.css" />
 <style>
 html, body, .folders.wrap, ul.folders {
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
 }
 </style>
 </head>
 <body>
-<p>hoge</p>
 <div class="folders wrap">
   <ul class="folders">
   </ul>
