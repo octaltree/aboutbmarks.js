@@ -48,27 +48,25 @@ html, body, .folders.wrap, ul.folders {
     scripts: [
       "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js",
       "https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/wookmark.min.js"],
-    numonloads: 0,
     addScripts: function(f){
-      this.scripts.forEach((uri, idx) => {
+      const adds = this.scripts.map(uri => f => () => {
         const s = document.createElement('script');
         s.src = uri;
-        s.onload = (e) => {
-          this.numonloads++;
-          if( this.numonloads == this.scripts.length ) f();
-        };
+        s.onload = f;
         document.body.appendChild(s);
       });
+      adds.reduceRight((iter, x) => x(iter), f)();
     }};
-  initializer.addScripts(function(){
+  const main = () => {
+    console.log('script sourced');
     $(function(){
-      console.log('script sourced');
       $('ul.folders').wookmark({
         container: $('.folders.wrap'),
         autoResize: true,
         offset: 0});
     });
-  });
+  };
+  initializer.addScripts(main);
 }();
 `,
   init: function(){
