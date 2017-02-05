@@ -55,7 +55,7 @@ const page = { // {{{
     s.innerHTML += str;
     this.doc.body.appendChild(s);
   }}; // }}}
-const bookmark = {
+const bookmark = { // {{{
   bookmarksservice:
     Cc["@mozilla.org/browser/nav-bookmarks-service;1"]
     .getService(Ci.nsINavBookmarksService),
@@ -93,7 +93,7 @@ const bookmark = {
           (base, y) => base.concat(y), [newdepth]);
       o };
     return rec(tree, []);
-  }};
+  }}; // }}}
 }();
 /*
 (function(){
