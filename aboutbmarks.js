@@ -13,12 +13,41 @@ var INFO = xml`
 !function(){
 const win = content.window;
 const doc = content.document;
-//https://cdnjs.cloudflare.com/ajax/libs/riot/3.1.0/riot+compiler.min.js
+const page = { // {{{
+  inhtml: `
+<head>
+</head>
+<body>
+<p>hoge</p>
+</body>
+`,
+  scripts: [
+    "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/wookmark.min.js"],
+  inscript: `
+console.log('asdf');
+`,
+  init: function(){
+    doc.documentElement.innerHTML = this.inhtml;
+    this.scripts.forEach(uri => {
+      const s = doc.createElement('script');
+      s.src = uri;
+      doc.body.appendChild(s);
+    });
+    this.addSnippet(this.inscript);
+  },
+  addSnippet(str){
+    const s = doc.createElement('script');
+    s.innerHTML += str;
+    doc.body.appendChild(s);
+  }}; // }}}
 commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
 function main(){
+  page.init();
 }
 win.console.log('aboutbmarks.js loaded');
 }();
+/*
 (function(){
   const cui = content.window.console;
 
@@ -157,4 +186,5 @@ win.console.log('aboutbmarks.js loaded');
   } // }}}
   commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
 }());
+*/
 // vim: sw=2 ts=2 et si fdm=marker:
