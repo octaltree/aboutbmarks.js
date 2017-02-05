@@ -32,6 +32,9 @@ html, body, .folders.wrap, ul.folders {
   height: 100%;
 }
 </style>
+<style>
+${liberator.globalVariables.aboutbmarks_css}
+</style>
 </head>
 <body>
 <div class="folders wrap">
