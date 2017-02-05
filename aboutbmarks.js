@@ -13,9 +13,16 @@ var INFO = xml`
 !function(){
 const win = content.window;
 const doc = content.document;
+commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
+function main(){
+  win.console.log('init page'); page.init();
+}
 const page = { // {{{
   inhtml: `
 <head>
+<title>aboutbmarks</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/css/main.min.css" />
 </head>
 <body>
 <p>hoge</p>
@@ -41,11 +48,8 @@ console.log('asdf');
     s.innerHTML += str;
     doc.body.appendChild(s);
   }}; // }}}
-commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
-function main(){
-  page.init();
+class Bookmark {
 }
-win.console.log('aboutbmarks.js loaded');
 }();
 /*
 (function(){
