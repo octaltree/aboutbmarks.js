@@ -51,7 +51,7 @@ ${liberator.globalVariables.aboutbmarks_css}
 </head>
 <body>
 <div class="folders wrap">
-  <ul class="folders">
+  <ul id="folders" class="folders">
   </ul>
 </div>
 </body>
@@ -72,12 +72,11 @@ ${liberator.globalVariables.aboutbmarks_css}
       adds.reduceRight((iter, x) => x(iter), f)();
     }};
   const main = () => {
-    $(function(){
-      $('ul.folders').wookmark({
-        container: $('.folders.wrap'),
-        autoResize: true,
-        offset: 0});
-    });
+    console.log('wookmark');
+    $('ul#folders').wookmark({
+      container: $('div.folders.wrap'),
+      autoResize: true,
+      offset: 0});
   };
   initializer.addScripts(main);
 }();
@@ -95,22 +94,25 @@ ${liberator.globalVariables.aboutbmarks_css}
   },
   showFolder: function(fs){
     // [{id: int, depth: [{id: int, title: str}], uris: [{title: str, uri: str}]}] ->
-    const bookmark = b => `<li class="uri"><a href="${b.uri}">${b.title}</a></li>`;
-    this.log(fs);
-    const tmp = `
-      <li>
-        <div class="folder">
-          <div class="title">
-            <a></a>
-            <span></span>
+    const rowb = b => `<li class="uri"><a href="${b.uri}">${b.title}</a></li>`;
+    const rowf = f => {
+      const tmp = `
+        <li>
+          <div class="folder">
+            <div class="title">
+              <a></a>
+              <span></span>
+            </div>
+            <div class="uris">
+              <ul>
+                <li><a href="">name</a></li>
+              </ul>
+            </div>
           </div>
-          <div class="uris">
-            <ul>
-              <li><a href="">name</a></li>
-            </ul>
-          </div>
-        </div>
-      </li>`;
+        </li>`;
+      return tmp;
+    };
+    this.doc.getElementById('folders').innerHTML = fs.map(rowf).join('');
   }}; // }}}
 const bookmark = { // {{{
   bookmarksservice:
