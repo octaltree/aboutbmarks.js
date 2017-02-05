@@ -14,6 +14,8 @@ var INFO = xml`
 commands.addUserCommand(["aboutbmarks"], "show bookmarks", main, {}, true);
 function main(){
   page.init();
+  page.log(bookmark.allFolders(1));
+  page.log(bookmark.allFolderPaths(1));
 }
 const page = { // {{{
   win: undefined,
@@ -53,8 +55,45 @@ const page = { // {{{
     s.innerHTML += str;
     this.doc.body.appendChild(s);
   }}; // }}}
-class Bookmark {
-}
+const bookmark = {
+  bookmarksservice:
+    Cc["@mozilla.org/browser/nav-bookmarks-service;1"]
+    .getService(Ci.nsINavBookmarksService),
+  historyservice:
+    Components.classes["@mozilla.org/browser/nav-history-service;1"]
+    .getService(Components.interfaces.nsINavHistoryService),
+  expand: function(fid, f){
+    const query = fid => {
+      const tmp = this.historyservice.getNewQuery();
+      tmp.setFolders([fid], 1);
+      return tmp;
+    };
+    const r = this.historyservice
+      .executeQuery(query(fid), this.historyservice.getNewQueryOptions()).root;
+    r.containerOpen = true;
+    const range = n => Array.from({length: n}, (v, k) => k);
+    const children = range(r.childCount).map(x => r.getChild(x));
+    const res = f(children);
+    r.containerOpen = false;
+    return res;
+  },
+  allFolders: function(fid){
+    return this.expand(fid, xs => {
+      const ys = xs.filter(x => x.type == x.RESULT_TYPE_FOLDER);
+      return {
+        id: fid,
+        children: ys.map(y => this.allFolders(y.itemId))};
+    });
+  },
+  allFolderPaths: function(fid){
+    const tree = this.allFolders(fid);
+    const rec = (x, depth) => {
+      const newdepth = depth.concat(x.id);
+      return x.children.map(y => rec(y, newdepth)).reduce(
+          (base, y) => base.concat(y), [newdepth]);
+      o };
+    return rec(tree, []);
+  }};
 }();
 /*
 (function(){
