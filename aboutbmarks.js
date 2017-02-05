@@ -42,23 +42,37 @@ html, body, .folders.wrap, ul.folders {
 </div>
 </body>
 `,
-  scripts: [
-    "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/wookmark.min.js"],
   inscript: `
 !function(){
-  console.log('script sourced');
+  const initializer = {
+    scripts: [
+      "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/wookmark.min.js"],
+    numonloads: 0,
+    addScripts: function(f){
+      this.scripts.forEach((uri, idx) => {
+        const s = document.createElement('script');
+        s.src = uri;
+        s.onload = (e) => {
+          this.numonloads++;
+          if( this.numonloads == this.scripts.length ) f();
+        };
+        document.body.appendChild(s);
+      });
+    }};
+  initializer.addScripts(function(){
+    console.log('script sourced');
+    $('ul.folders').wookmark({
+      container: $('.folders.wrap'),
+      autoResize: true,
+      offset: 0});
+  });
 }();
 `,
   init: function(){
     this.win = content.window;
     this.doc = content.document;
     this.doc.documentElement.innerHTML = this.inhtml;
-    this.scripts.forEach(uri => {
-      const s = this.doc.createElement('script');
-      s.src = uri;
-      this.doc.body.appendChild(s);
-    });
     this.addSnippet(this.inscript);
   },
   addSnippet(str){
