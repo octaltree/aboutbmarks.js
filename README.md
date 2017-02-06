@@ -13,5 +13,5 @@
 と設定すれば, about:bmarksを一覧ページにすることができるのでオススメです.
 
 ## TODO
-* UI改善
+* xhtmlドキュメントでnot well-formedといわれないようにする
 * INFO書く
