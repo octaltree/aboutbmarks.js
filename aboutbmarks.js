@@ -50,6 +50,7 @@ html, body {
   overflow-x: hidden;
 }
 a { color: #819be7; }
+a:visited { color: #9d84b7; }
 .folders.wrap {
   width: 100%;
   margin: 0;
