@@ -77,11 +77,18 @@ ${liberator.globalVariables.aboutbmarks_css}
       adds.reduceRight((iter, x) => x(iter), f)();
     }};
   const main = () => {
-    console.log('wookmark');
-    $('ul#folders').wookmark({
-      container: $('div.folders.wrap'),
-      autoResize: true,
-      offset: 0});
+    var preheight = document.body.scrollHeight;
+    const wookmark = () => {
+      $('ul#folders').wookmark({
+        container: $('.folders.wrap'),
+        autoResize: true,
+        offset: 0});
+      if( preheight <= document.body.scrollHeight ){
+        preheight = document.body.scrollHeight;
+        setTimeout(wookmark, 0);
+      }
+    };
+    wookmark();
   };
   initializer.addScripts(main);
 }();
