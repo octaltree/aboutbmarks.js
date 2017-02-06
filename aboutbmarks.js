@@ -29,7 +29,7 @@ function main(){
           }),
         uris: bookmark.expand(fid, xs => xs
             .filter(x => x.type == x.RESULT_TYPE_URI)
-            .map(x => { return {id: x.itemId, title: x.title}; }))};
+            .map(x => { return {uri: x.uri, title: x.title}; }))};
     });
   page.showFolder(fs);
 }
@@ -106,19 +106,18 @@ ${liberator.globalVariables.aboutbmarks_css}
   },
   showFolder: function(fs){
     // [{id: int, title: str, depth: [{id: int, title: str}], uris: [{title: str, uri: str}]}] ->
-    this.log(fs);
-    const rowb = b => `<li class="uri"><a href="${b.uri}">${b.title}</a></li>`;
     const rowf = f => {
       const tmp = `
-        <li>
+        <li id="folder${f.id}">
           <div class="folder">
             <div class="title">
-              <a></a>
-              <span></span>
+              ${f.depth.map(x => `<a href="#folder${x.id}">${x.title}</a>`).join('\n')}
+              <span>${f.title}</span>
             </div>
             <div class="uris">
               <ul>
-                <li><a href="">name</a></li>
+                ${f.uris.map(b => `
+                    <li class="uri"><a href="${b.uri || ''}">${b.title || ''}</a></li>`)}
               </ul>
             </div>
           </div>
