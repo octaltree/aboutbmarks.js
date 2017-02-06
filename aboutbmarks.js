@@ -40,14 +40,37 @@ const page = { // {{{
   inhtml: `
 <head>
 <title>aboutbmarks</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/2.1.2/css/main.min.css" />
 <style>
-html, body, .folders.wrap, ul.folders {
+html, body {
+  background-color: #222222;
+  color: #ccc;
+  overflow-x: hidden;
+}
+a { color: #819be7; }
+.folders.wrap {
+  width: 100%;
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
+}
+ul#folders {
+  list-style-type: none;
+}
+ul#folders > li {
+  width: 280px;
+  background-color: #141414;
+}
+.title {
+  background-color: #28313e;
+  padding: 3px 0;
+}
+ul#folders > li div.uris {
+  padding: 5px 0;
+}
+ul#folders > li div.uris li {
+  margin-bottom: 2px;
 }
 </style>
 <style>
@@ -82,7 +105,7 @@ ${liberator.globalVariables.aboutbmarks_css}
       $('ul#folders').wookmark({
         container: $('.folders.wrap'),
         autoResize: true,
-        offset: 0});
+        offset: 10});
       if( preheight <= document.body.scrollHeight ){
         preheight = document.body.scrollHeight;
         setTimeout(wookmark, 0);
@@ -117,7 +140,7 @@ ${liberator.globalVariables.aboutbmarks_css}
             <div class="uris">
               <ul>
                 ${f.uris.map(b => `
-                    <li class="uri"><a href="${b.uri || ''}">${b.title || ''}</a></li>`)}
+                    <li class="uri"><a href="${b.uri || ''}">${b.title || ''}</a></li>`).join('')}
               </ul>
             </div>
           </div>
