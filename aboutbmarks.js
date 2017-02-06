@@ -135,8 +135,10 @@ ${liberator.globalVariables.aboutbmarks_css}
         <li id="folder${f.id}">
           <div class="folder">
             <div class="title">
-              ${f.depth.map(x => `<a href="#folder${x.id}">${x.title}</a>`).join('\n')}
-              <span>${f.title}</span>
+              <h3>
+                  ${f.depth.map(x => `<a href="#folder${x.id}">${x.title}</a>`).join('\n')}
+                  <span>${f.title}</span>
+              </h3>
             </div>
             <div class="uris">
               <ul>
