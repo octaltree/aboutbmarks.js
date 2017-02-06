@@ -8,10 +8,8 @@
 ```
 で現在開いているページを書き換え一覧表示します.
 ```
-:autocmd DOMLoad about:blank aboutbmarks
-```
-と設定すれば, about:blankを一覧ページとすることができるのでオススメです.
 
 ## TODO
 * xhtmlドキュメントでnot well-formedといわれないようにする
+* about:blankで<c-f>スクロールできない
 * INFO書く
