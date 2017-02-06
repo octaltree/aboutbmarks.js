@@ -6,8 +6,12 @@
 ```
 :aboutbmarks
 ```
+で現在開いているページを書き換え一覧表示します.
+```
+:autocmd DOMLoad about:bmarks aboutbmarks
+```
+と設定すれば, about:bmarksを一覧ページにすることができるのでオススメです.
 
 ## TODO
-* コード整形
 * UI改善
 * INFO書く
