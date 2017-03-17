@@ -60,7 +60,7 @@ ul#folders {
   list-style-type: none;
 }
 ul#folders > li {
-  width: 280px;
+  width: 560px;
   background-color: #141414;
 }
 .title {
