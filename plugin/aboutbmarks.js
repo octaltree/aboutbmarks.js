@@ -136,8 +136,8 @@ ${liberator.globalVariables.aboutbmarks_css}
           <div class="folder">
             <div class="title">
               <h3>
-                  ${f.depth.map(x => `<a href="#folder${x.id}">${x.title}</a>`).join('\n')}
-                  <span>${f.title}</span>
+                ${f.depth.map(x => `<a href="#folder${x.id}">${x.title}</a>`).join('\n')}
+                <span>${f.title}</span>
               </h3>
             </div>
             <div class="uris">
@@ -186,9 +186,10 @@ const bookmark = { // {{{
     const tree = this.allFolders(fid);
     const rec = (x, depth) => {
       const newdepth = depth.concat(x.id);
-      return x.children.map(y => rec(y, newdepth)).reduce(
-          (base, y) => base.concat(y), [newdepth]);
-      o };
+      return x.children
+        .map(y => rec(y, newdepth))
+        .reduce((base, y) => base.concat(y), [newdepth]);
+      };
     return rec(tree, []);
   }}; // }}}
 }();
