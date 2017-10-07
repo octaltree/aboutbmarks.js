@@ -1,12 +1,19 @@
 # aboutbmarks.js
-[MyBookmarks](https://addons.mozilla.org/ja/firefox/addon/mybookmarks/)クローン.
-ブックマークを画面いっぱいに表示するvimperatorプラグイン.
+[MyBookmarks](https://addons.mozilla.org/ja/firefox/addon/mybookmarks/) clone.
+This vimperator's plugin shows all booktmarks on tab.
+
+# Install
+with [vimppm](https://github.com/cd01/vimppm),
+adding
+```
+source ~/.vimperator/vimppm/plugin/vimppm.js
+vimppm 'octaltree/aboutbmarks.js'
+```
+to .vimperatorrc and running `:vimppm install`.
 
 ## Usage
 ```
 :aboutbmarks
-```
-で現在開いているページを書き換え一覧表示します.
 ```
 
 ## TODO
